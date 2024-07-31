@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+  vote:
+    build:
+      context: ./vote
+    container_name: vote
+    ports:
+      - '2000:80'
+    depends_on:
+      - redis
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - '6379:6379'
+
+  worker:
+    build:
+      context: ./worker
+    container_name: worker
+    depends_on:
+      - redis
+      - postgres_db
+
+  postgres_db:
+    image: postgres
+    container_name: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  result:
+    build:
+      context: ./result
+    container_name: result
+    ports:
+      - '4000:4000'
+    depends_on:
+      - postgres_db
+

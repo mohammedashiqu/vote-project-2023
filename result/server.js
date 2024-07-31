@@ -69,10 +69,13 @@ function collectVotesFromResult(result) {
   return votes;
 }
 
+// Use built-in express middleware instead of body-parser
+app.use(express.json()); // for parsing application/json
+app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
 app.use(cookieParser());
-app.use(bodyParser());
 app.use(methodOverride('X-HTTP-Method-Override'));
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");

@@ -1,1 +1,45 @@
+User:
+
+1. A front-end web app in Python which lets you vote between two options
+2. A Redis which collects new votes
+3. A .NET worker which consumes votes and stores them in…
+4. A Postgres database backed by a Docker volume
+5. A Node.js web app which shows the results of the voting in real time
+
+
+1. Python - Vote
+2. Redis - 
+3. .NET - Worker
+4. Postgres
+5. Node - Result
+
+$ docker run --name vote-redis -d redis redis-server --save 60 1 --loglevel warning
+
+
+Vote App Setup Steps:
+----------------------
+1. Build an Images
+- Vote
+docker build -t vote:v1 .
+
+- Worker
+docker build -t worker:v1 .
+
+- Result
+docker build -t result:v1 .
+
+2. Redis Container Run
+docker run -d --name redis -h redis redis
+
+3. Postgres Container Run
+docker run -d --name postgres -h postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres postgres
+
+4. Vote Container Run and Link with Redis
+docker run -d --name vote -p 2000:80 --link redis:redis vote:v1
+
+5. Worker Container Run and Link with Redis and Postgres
+docker run -d --name worker --link redis:redis --link postgres:db worker:v1
+
+6. Result Container Run and link with Postgres
+docker run -d --name result -p 4000:4000 --link postgres:db  result:v1
 
